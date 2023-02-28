@@ -16,15 +16,18 @@ export default function GameField({
   onCellUnitClick,
   changeSmiley,
 }: GameFieldProps) {
-
-  function mouseUpEventListener(){
+  function mouseUpEventListener() {
     changeSmiley(SmileyStatus.Normal)
-    document.removeEventListener('mouseup',mouseUpEventListener)
+    document.removeEventListener('mouseup', mouseUpEventListener)
   }
 
   function handleMouseDown(e: MouseEvent<HTMLButtonElement>) {
     changeSmiley(SmileyStatus.Scared)
-    document.addEventListener('mouseup',mouseUpEventListener)
+    document.addEventListener('mouseup', mouseUpEventListener)
+  }
+
+  function handleMouseUp(cellNumber: number) {
+    onCellUnitClick(cellNumber)
   }
   return (
     <div
@@ -38,12 +41,10 @@ export default function GameField({
         <button
           key={index}
           onMouseDown={handleMouseDown}
+          onMouseUp={() => handleMouseUp(index)}
           className={`game-field__grid-element game-field__grid-element_${
             (item.isClear && 'clear') || (item.isMined && 'minned')
           }`}
-          onClick={() => {
-            onCellUnitClick(item.cellNumber)
-          }}
         />
       ))}
     </div>
