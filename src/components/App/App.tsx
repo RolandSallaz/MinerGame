@@ -4,18 +4,28 @@ import Counter from '../Counter/Counter'
 import Status from '../Status/Status'
 import GameField from '../GameField/GameField'
 
-enum GAMESETTING {
+enum GameSettings {
   CellSize = 16,
   InitMines = 40,
 }
 
+export enum SmileyStatus {
+  Normal = 'normal',
+  Scared = 'scared',
+  Dead = 'dead',
+  Cool = 'cool',
+}
+
 function App() {
-  const [minesCount, setMinesCount] = useState<number>(GAMESETTING.InitMines)
+  const [minesCount, setMinesCount] = useState<number>(GameSettings.InitMines)
   const [timer, setTimer] = useState<number>(0)
   const [cellUnits, setCellUnits] = useState<ICellUnit[]>([])
   const [isGameStarted, setIsGameStarted] = useState<boolean>(false)
+  const [smileEmotion, setSmileyEmotion] = useState<SmileyStatus>(
+    SmileyStatus.Normal,
+  )
   useEffect(() => {
-    startNewGame();
+    startNewGame()
 
     //Запускаем таймер
     setInterval(() => {
@@ -23,28 +33,26 @@ function App() {
     }, 1000)
   }, [])
 
-  function startNewGame(){
-        //Устанавливаем изначальные клеточки в сетке
-        const arr = Array.from(Array(Math.pow(GAMESETTING.CellSize, 2)).keys())
-        setCellUnits(
-          arr.map((i) => ({
-            cellNumber: i,
-            isMined: false,
-            isClear: false,
-          })),
-        )
+  function startNewGame() {
+    //Устанавливаем изначальные клеточки в сетке
+    const arr = Array.from(Array(Math.pow(GameSettings.CellSize, 2)).keys())
+    setCellUnits(
+      arr.map((i) => ({
+        cellNumber: i,
+        isMined: false,
+        isClear: false,
+      })),
+    )
 
-        setTimer(0)
-        setMinesCount(GAMESETTING.InitMines)
-        setIsGameStarted(false)
+    setTimer(0)
+    setMinesCount(GameSettings.InitMines)
+    setIsGameStarted(false)
   }
-  function handleSmileyClick(){
-    startNewGame()
-  }
+
   function plantMines() {
     const arr = cellUnits.filter((item) => !item.isClear)
     const shuffled = [...arr].sort(() => 0.5 - Math.random())
-    const newArr = cellUnits;
+    const newArr = cellUnits
     shuffled
       .slice(0, minesCount)
       .forEach((item) => (newArr[item.cellNumber] = { ...item, isMined: true }))
@@ -61,16 +69,22 @@ function App() {
     }
   }
 
+  function changeSmiley(emotion: SmileyStatus) {
+    setSmileyEmotion(emotion)
+  }
+
   return (
     <>
       <main className="game">
-        <Status>
-          <Counter value={minesCount} />
-          <button className="status__button" onClick={handleSmileyClick}></button>
-          <Counter value={timer} />
-        </Status>
+        <Status
+          emotion={smileEmotion}
+          timer={timer}
+          minesCount={minesCount}
+          onNewGameClick={startNewGame}
+        />
         <GameField
-          cellSize={GAMESETTING.CellSize}
+          changeSmiley={changeSmiley}
+          cellSize={GameSettings.CellSize}
           cellUnits={cellUnits}
           onCellUnitClick={handleCellUnitClick}
         />
