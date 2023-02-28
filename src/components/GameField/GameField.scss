@@ -1,8 +1,17 @@
 @use "../../variables.scss" as *; 
 
 .game-field{
-    border: 1px solid red;
     width: 100%;
-    height: 100px;
+    height: 516px;
     box-shadow: $innerBoxShadow;
+    display: grid;
+    &__grid-element{
+        cursor: pointer;
+        border: none;
+        background-image: url('../../images/cellUnit.png');
+        background-size:cover;
+        &_clear{
+            background-image: url('../../images/cellUnitClear.png');
+        }
+    }
 }
