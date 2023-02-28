@@ -1,9 +1,11 @@
 @use "../../variables.scss" as *; 
 
 .game {
-  width: 550px;
-  height: 635px;
+  width: $gameWidth;
+  padding:0 15px;
+  height: 535px;
   background-color: $gameColor;
+  box-shadow: $boxShadow;
 }
 
 .footer{

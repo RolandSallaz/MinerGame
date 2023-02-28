@@ -1,3 +1,6 @@
 $gameColor:#bdbdbd;
-$gameWidth: 550px;
+$gameWidth: 523px;
 $shadowColor: #7b7b7b;
+$innerBoxShadow: inset 3px 3px 2px $shadowColor, 
+inset -3px -3px 2px white;
+$boxShadow:inset 3px 3px 2px white, inset -3px -3px 1px $shadowColor;
