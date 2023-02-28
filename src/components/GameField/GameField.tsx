@@ -18,7 +18,7 @@ export default function GameField({ cellSize,cellUnits, onCellUnitClick }: GameF
       }}
     >
       {cellUnits.map((item, index) => (
-        <button key={index} className={`game-field__grid-element game-field__grid-element_${item.isClear && 'clear'}`} onClick={()=>{onCellUnitClick(item.cellNumber)}} />
+        <button key={index} className={`game-field__grid-element game-field__grid-element_${item.isClear && 'clear' || item.isMined && 'minned'}`} onClick={()=>{onCellUnitClick(item.cellNumber)}} />
       ))}
     </div>
   )

@@ -11,7 +11,11 @@
         background-image: url('../../images/cellUnit.png');
         background-size:cover;
         &_clear{
+            cursor:default;
             background-image: url('../../images/cellUnitClear.png');
+        }
+        &_minned{
+            background-image: url('../../images/isMinned.png');
         }
     }
 }

@@ -1,7 +1,7 @@
 import './Status.scss'
 
 interface StatusProps {
-  children?: React.ReactNode
+  children?: React.ReactNode,
 }
 export default function Status({ children }: StatusProps) {
   return (
