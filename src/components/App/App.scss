@@ -1,0 +1,39 @@
+$gameColor:#bdbdbd;
+.game {
+  width: 550px;
+  height: 635px;
+  background-color: $gameColor;
+}
+.status {
+  margin: 16px 13px;
+  z-index: 1;
+  width: calc(100% - 30px);
+  height: 72px;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  background: linear-gradient(172.2deg, rgba(123,123,123,1) 0%, rgba(153,153,153,1) 50%, rgba(235,235,235,1) 50%, rgba(255,255,255,1) 100%);
+  &__containter{
+    width: calc(100% - 36px);
+    height: calc(100% - 5px);
+    margin-top: 2.5px;
+    background-color: $gameColor;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+  }
+  &__button{
+    background-image: url('../../images/smiley.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+    height: 50px;
+    width: 48px;
+    border: none;
+    padding: 0;
+    &:active{
+      background-image: url('../../images/smileyClicked.png');
+    }
+  }
+}
