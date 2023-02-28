@@ -1,5 +1,4 @@
 import './Counter.scss'
-import test from '../../images/1.png'
 
 interface CounterProps {
   value: number

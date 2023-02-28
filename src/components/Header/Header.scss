@@ -1,0 +1,38 @@
+@use "../../variables.scss" as *; 
+
+.status {
+    padding: 15px;
+    z-index: 1;
+    width: calc($gameWidth - 30px);
+    height: 72px;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    background: $gameColor;
+    &__containter{
+      width: calc(100% - 36px);
+      height: calc(100% - 5px);
+      box-shadow: inset 3px 3px 2px $shadowColor, 
+            inset -3px -3px 2px #fff;
+      margin-top: 2.5px;
+      background-color: $gameColor;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 15px;
+    }
+    &__button{
+      background-image: url('../../images/smiley.png');
+      background-repeat: no-repeat;
+      background-size: contain;
+      cursor: pointer;
+      height: 50px;
+      width: 48px;
+      border: none;
+      padding: 0;
+      &:active{
+        background-image: url('../../images/smileyClicked.png');
+      }
+    }
+  }
+  
