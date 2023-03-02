@@ -9,10 +9,6 @@ enum GameSettings {
   InitMines = 40,
 }
 
-enum Axis {
-  x,
-  y,
-}
 
 export enum SmileyStatus {
   Normal = 'normal',
@@ -22,14 +18,14 @@ export enum SmileyStatus {
 }
 
 const App = memo(() => {
-  const [minesCount, setMinesCount] = useState<number>(GameSettings.InitMines)
-  const [timer, setTimer] = useState<number>(0)
+  const [minesCount, setMinesCount] = useState(GameSettings.InitMines)
+  const [timer, setTimer] = useState(0)
   const [cellUnits, setCellUnits] = useState<ICellUnit[]>([])
-  const [isGameStarted, setIsGameStarted] = useState<boolean>(false)
+  const [isGameStarted, setIsGameStarted] = useState(false)
   const [smileEmotion, setSmileyEmotion] = useState<SmileyStatus>(
     SmileyStatus.Normal,
   )
-  const [isGameOver, setIsGameOver] = useState<boolean>(false)
+  const [isGameOver, setIsGameOver] = useState(false)
   const interval = useRef<ReturnType<typeof setInterval>>()
 
   useEffect(() => {
@@ -37,10 +33,7 @@ const App = memo(() => {
     if (isGameOver) {
       clearInterval(interval.current)
     } else {
-      interval.current = setInterval(
-        () => setTimer((prev) => (prev += 1)),
-        1000,
-      )
+      interval.current = setInterval(() => setTimer((prev) => prev + 1), 1000)
     }
   }, [isGameOver])
 
@@ -59,13 +52,9 @@ const App = memo(() => {
     setIsGameOver(false)
     const arr = Array.from(Array(Math.pow(GameSettings.CellSize, 2)).keys())
     setCellUnits(
-      arr.map((i) => ({
-        cellNumber: i,
-        isMined: false,
-        isClear: false,
-      })),
+      // Заполняем поле
+      arr.map((i) => ({ cellNumber: i, isMined: false, isClear: false })),
     )
-
     setTimer(0)
     setMinesCount(GameSettings.InitMines)
     setIsGameStarted(false)
@@ -82,38 +71,50 @@ const App = memo(() => {
 
   function handleCellUnitClick(cellNumber: number) {
     if (isGameOver) return
-    if (!isGameStarted) { //первый клик
-      const newArr = cellUnits
-      newArr[cellNumber] = { cellNumber, isClear: true, isMined: false }
-      setCellUnits(newArr)
+    if (!isGameStarted) {
+      //первый клик
+      setCellUnits((prev) => {
+        const newArr = [...prev]
+        newArr[cellNumber] = { cellNumber, isClear: true, isMined: false }
+        return newArr
+      })
       setIsGameStarted(true)
       plantMines()
     } else {
       if (cellUnits[cellNumber].isMined) {
-        return setIsGameOver(true)
-      }
-      else{ // если не попали на мину
-        cellUnits[cellNumber].isClear=true
+        setIsGameOver(true)
+      } else {
+        setCellUnits((prev) => {
+          const newArr = [...prev]
+          newArr[cellNumber].isClear = true
+          return newArr
+        })
       }
     }
     openNearCells(cellNumber)
   }
 
   function openNearCells(cellNumber: number) {
-    //todo
-    function checkForMine(axis: Axis) {
-      let leftLimit: number = cellNumber - 1
-      let rightLimit: number = cellNumber + 1
-      let topLimit: number = cellNumber - GameSettings.CellSize
-      let bottomLimit: number = cellNumber + GameSettings.CellSize
-      while (!cellUnits[leftLimit].isMined && !cellUnits[rightLimit].isMined) {
-        cellUnits[leftLimit].isClear = true
-        cellUnits[rightLimit].isClear = true
-        leftLimit--
-        rightLimit++
-      }
+    function checkAroundCell() {
+      let mines = 0
+      const adjacentCells = [
+        -GameSettings.CellSize,
+        -GameSettings.CellSize - 1,
+        -GameSettings.CellSize + 1,
+        -1,
+        1,
+        GameSettings.CellSize,
+        GameSettings.CellSize - 1,
+        GameSettings.CellSize + 1,
+      ]
+      adjacentCells.forEach((cell) => {
+        cellUnits[cellNumber + cell].isMined && mines++
+      })
+      return mines
     }
-    checkForMine(Axis.x)
+    let test = 0
+    let currentUnit = cellNumber
+    console.log(checkAroundCell())
   }
 
   function changeSmiley(emotion: SmileyStatus) {
@@ -135,7 +136,6 @@ const App = memo(() => {
     if (isGameOver) return
     handleCellUnitClick(cellNumber)
   }
-
   return (
     <>
       <main className="game">
