@@ -1,4 +1,5 @@
 import { SmileyStatus } from '../App/App'
+import {memo} from 'react'
 import Counter from '../Counter/Counter'
 import './Status.scss'
 

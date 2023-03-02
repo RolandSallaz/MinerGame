@@ -1,35 +1,37 @@
-@use "../../variables.scss" as *; 
+@use "../../variables.scss" as *;
 
 .status {
-    z-index: 1;
-    width: calc(100% - 30px);
-    padding: 0 15px;
-    margin:15px 0;
-    height: 72px;
-    display: flex;
-    position: relative;
-    justify-content: space-between;
-    align-items: center;
-    background: $gameColor;
-    box-shadow: $innerBoxShadow;
-    &__button{
-      background-image: url('../../images/smiley.png');
-      background-repeat: no-repeat;
-      background-size: cover;
-      cursor: pointer;
-      height: 50px;
-      width: 48px;
-      border: none;
-      padding: 0;
-      &:active{
-        background-image: url('../../images/smileyClicked.png');
-      }
-      &_scared{
-        background-image: url('../../images/smileyScared.png');
-      }
-      &_cool{
-        background-image: url('../../images/smileyCool.png');
-      }
+  z-index: 1;
+  width: calc(100% - 30px);
+  padding: 0 15px;
+  margin: 15px 0;
+  height: 72px;
+  display: flex;
+  position: relative;
+  justify-content: space-between;
+  align-items: center;
+  background: $gameColor;
+  box-shadow: $innerBoxShadow;
+  &__button {
+    background-image: url('../../images/smiley.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;
+    height: 50px;
+    width: 48px;
+    border: none;
+    padding: 0;
+    &:active {
+      background-image: url('../../images/smileyClicked.png');
+    }
+    &_scared {
+      background-image: url('../../images/smileyScared.png');
+    }
+    &_cool {
+      background-image: url('../../images/smileyCool.png');
+    }
+    &_dead {
+      background-image: url('../../images/smileyDead.png');
     }
   }
-  
+}

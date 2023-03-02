@@ -1,33 +1,25 @@
-import { MouseEventHandler } from 'react'
 import './GameField.scss'
 import { MouseEvent } from 'react'
-import { SmileyStatus } from '../App/App'
 
 interface GameFieldProps {
   cellSize: number
   cellUnits: ICellUnit[]
-  onCellUnitClick: (cellNumber: number) => void
-  changeSmiley: (emotion: SmileyStatus) => void
+  onMouseDown: (e: MouseEvent<HTMLButtonElement>) => void
+  onMouseUp: (cellNumber: number) => void
 }
 
 export default function GameField({
   cellSize,
   cellUnits,
-  onCellUnitClick,
-  changeSmiley,
+  onMouseDown,
+  onMouseUp,
 }: GameFieldProps) {
-  function mouseUpEventListener() {
-    changeSmiley(SmileyStatus.Normal)
-    document.removeEventListener('mouseup', mouseUpEventListener)
-  }
-
   function handleMouseDown(e: MouseEvent<HTMLButtonElement>) {
-    changeSmiley(SmileyStatus.Scared)
-    document.addEventListener('mouseup', mouseUpEventListener)
+    onMouseDown(e)
   }
 
   function handleMouseUp(cellNumber: number) {
-    onCellUnitClick(cellNumber)
+    onMouseUp(cellNumber)
   }
   return (
     <div
