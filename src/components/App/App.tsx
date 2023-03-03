@@ -74,11 +74,12 @@ const App = memo(() => {
             .slice(0, GameSettings.InitMines)
             .forEach((item) => (arr[item.cellNumber].isMined = true))
         setCellUnits(arr)
+        return arr;
     }
 
     function handleCellUnitClick(cellNumber: number) {
-        function setMinesAroundCell() {
-            cellUnits[cellNumber].adjacentMines = minesAround
+        function setMinesAroundCell(arr:ICellUnit[]) {
+            arr[cellNumber].adjacentMines = minesAround
         }
 
         if (isGameOver) return
@@ -86,11 +87,11 @@ const App = memo(() => {
         if (!isGameStarted) {
             // первый клик
 
-            plantMines(cellUnits, cellNumber)
+            const minedArr = plantMines(cellUnits, cellNumber)
             setIsGameStarted(true)
-            minesAround = checkAroundCell(cellNumber)
+            minesAround = checkAroundCell(cellNumber,minedArr)
             if (minesAround) {
-                return setMinesAroundCell()
+                return setMinesAroundCell(minedArr)
             } // Если есть мины, то оставляем одну клетку
             else {
                 openNearCells(cellNumber)
@@ -103,7 +104,7 @@ const App = memo(() => {
             } else {
                 if (minesAround) {
                     // Если есть мины, то оставляем одну клетку
-                    return setMinesAroundCell()
+                    return setMinesAroundCell(cellUnits)
                 } else {
                     // Если попали на пустую клетку
                     setCellUnits((prev) => {
@@ -147,7 +148,7 @@ const App = memo(() => {
         })
     }
 
-    function checkAroundCell(cellNumber: number) {
+    function checkAroundCell(cellNumber: number, arr: ICellUnit[] = cellUnits) {
         let mines = 0
         const adjacentCells = [
             -GameSettings.CellSize,
@@ -165,11 +166,12 @@ const App = memo(() => {
                 cellToCheck >= 0 &&
                 cellToCheck < Math.pow(GameSettings.CellSize, 2) - 1
             ) {
-                cellUnits[cellToCheck].isMined && mines++
+                arr[cellToCheck].isMined && mines++
             }
         })
         return mines
     }
+
     function changeSmiley(emotion: SmileyStatus) {
         setSmileyEmotion(emotion)
     }
@@ -195,14 +197,14 @@ const App = memo(() => {
 
                 if ((!cellElement.cellState || cellElement.cellState == CellState.Default) && minesCount) {
                     cellElement.cellState = CellState.Defused
-                    return setMinesCount(prev =>prev -= 1)
+                    return setMinesCount(prev => prev -= 1)
                 } else if (cellElement.cellState == CellState.Defused || (!cellElement.cellState || cellElement.cellState == CellState.Default && !minesCount)) {
-                    if(cellElement.cellState == CellState.Defused){
+                    if (cellElement.cellState == CellState.Defused) {
                         setMinesCount(prev => prev += 1)
                     }
                     cellElement.cellState = CellState.Question
                 } else if (cellElement.cellState == CellState.Question) {
-                     cellElement.cellState = CellState.Default
+                    cellElement.cellState = CellState.Default
                 }
             }
         }
