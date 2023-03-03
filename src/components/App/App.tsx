@@ -24,6 +24,11 @@ export enum CellState {
     Default
 }
 
+export enum GameOverState {
+    Win,
+    Lose,
+}
+
 const App = memo(() => {
     const [minesCount, setMinesCount] = useState<number>(GameSettings.InitMines)
     const [timer, setTimer] = useState(0)
@@ -33,7 +38,7 @@ const App = memo(() => {
         SmileyStatus.Normal,
     )
     const [openedCells, setOpenedCells] = useState<number>(0)
-    const [isGameOver, setIsGameOver] = useState(false)
+    const [gameOver, setGameOver] = useState<GameOverState | null>(null)
     const interval = useRef<ReturnType<typeof setInterval>>()
 
     const adjacentCells = [
@@ -49,20 +54,24 @@ const App = memo(() => {
 
     useEffect(() => {
         //timer controller
-        if (isGameOver) {
+        if (gameOver == GameOverState.Lose || gameOver == GameOverState.Win) {
             clearInterval(interval.current)
         } else {
             interval.current = setInterval(() => setTimer((prev) => prev + 1), 1000)
         }
-    }, [isGameOver])
+    }, [gameOver])
 
     useEffect(() => {
-        if (isGameOver) {
+        if (gameOver == GameOverState.Lose) {
             changeSmiley(SmileyStatus.Dead)
+        } else if (gameOver == GameOverState.Win) {
+            changeSmiley(SmileyStatus.Cool)
         }
-    }, [isGameOver, smileEmotion])
+    }, [gameOver, smileEmotion])
     useEffect(() => {
-        console.log(openedCells)
+        if (openedCells == cellUnits.length - GameSettings.InitMines) {
+            setGameOver(GameOverState.Win)
+        }
     }, [openedCells])
     useEffect(() => {
         startNewGame()
@@ -70,7 +79,7 @@ const App = memo(() => {
 
     function startNewGame() {
         //Устанавливаем изначальные клеточки в сетке
-        setIsGameOver(false)
+        setGameOver(null)
         const arr = Array.from(Array(Math.pow(GameSettings.CellSize, 2)).keys())
         setCellUnits(
             // Заполняем поле
@@ -84,7 +93,7 @@ const App = memo(() => {
     }
 
     function plantMines(arrayToFill: ICellUnit[], clickedCell: number) {
-        const shuffled = arrayToFill.filter(item=>item.cellNumber!==clickedCell).sort(() => 0.5 - Math.random())
+        const shuffled = arrayToFill.filter(item => item.cellNumber !== clickedCell).sort(() => 0.5 - Math.random())
         shuffled
             .slice(0, GameSettings.InitMines)
             .forEach((item) => {
@@ -99,11 +108,11 @@ const App = memo(() => {
             arr[cellNumber].adjacentMines = minesAround
         }
 
-        if (isGameOver) return
+        if (gameOver) return
         let minesAround = checkAroundCell(cellNumber)
         if (!isGameStarted) {
             // первый клик
-            setOpenedCells(prev=>prev+1)
+            setOpenedCells(prev => prev + 1)
             const minedArr = plantMines(cellUnits, cellNumber)
             setIsGameStarted(true)
             minesAround = checkAroundCell(cellNumber, minedArr)
@@ -115,12 +124,17 @@ const App = memo(() => {
             }
         } else {
             // Если игра уже начата
+            if (cellUnits[cellNumber].isClear || cellUnits[cellNumber].adjacentMines) {
+                return
+            }
             if (cellUnits[cellNumber].isMined) {
                 // Если попали по мине
-                setIsGameOver(true)
+                cellUnits[cellNumber].boom = true
+                setGameOver(GameOverState.Lose)
             } else {
                 if (minesAround) {
                     // Если есть мины, то оставляем одну клетку
+                    setOpenedCells(prev => prev + 1)
                     return setMinesAroundCell(cellUnits)
                 } else {
                     // Если попали на пустую клетку
@@ -129,9 +143,11 @@ const App = memo(() => {
                         return prev
                     })
                     openNearCells(cellNumber)
+
                 }
             }
         }
+        setOpenedCells(cellUnits.filter(item => item.isClear || item.adjacentMines).length)
     }
 
     function openNearCells(cellNumber: number) {
@@ -178,19 +194,18 @@ const App = memo(() => {
     }
 
     function handleMouseDownOnCell() {
-        if (isGameOver) return
+        if (gameOver) return
         changeSmiley(SmileyStatus.Scared)
         document.addEventListener('mouseup', mouseUpEventListener)
     }
 
     function handleMouseUp(cellNumber: number, isLeftClick: boolean) {
-        if (isGameOver) return
+        if (gameOver) return
         const cellElement = cellUnits[cellNumber]
         if (isLeftClick) {
             handleCellUnitClick(cellNumber)
         } else {  //Обработка правого клика мыши
             if (!cellElement.isClear && !cellElement.adjacentMines) { //Если клетка не открыта
-
                 if ((!cellElement.cellState || cellElement.cellState == CellState.Default) && minesCount) {
                     cellElement.cellState = CellState.Defused
                     return setMinesCount(prev => prev -= 1)
@@ -216,6 +231,7 @@ const App = memo(() => {
                     onNewGameClick={startNewGame}
                 />
                 <GameField
+                    gameOver={gameOver}
                     cellSize={GameSettings.CellSize}
                     cellUnits={cellUnits}
                     onMouseDown={handleMouseDownOnCell}

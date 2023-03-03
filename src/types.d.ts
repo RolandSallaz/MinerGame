@@ -6,4 +6,5 @@ export interface ICellUnit {
   isClear: boolean
   adjacentMines?: number
   cellState?: CellState | null
+  boom?: boolean
 }

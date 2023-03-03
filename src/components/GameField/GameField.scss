@@ -17,22 +17,32 @@
       background-image: url('../../images/cellUnitClear.png');
     }
 
-    &_minned {
+    &_mined {
       background-image: url('../../images/isMinned.png');
+    }
+
+    &_boom {
+      background-image: url("../../images/redMine.png");
     }
 
     &_question {
       background-image: url('../../images/question.png');
     }
-    &_clear-question{
+
+    &_clear-question {
       background-image: url("../../images/questionOpened.png");
     }
-    &_defused{
+
+    &_defused {
       background-image: url("../../images/flag.png");
     }
-    &_default{
+    &_mine-defused{
+      background-image: url("../../images/defusedMine.png");
+    }
+    &_default {
       background-image: url("../../images/cellUnit.png");
     }
+
     &_adjacent-mines {
       cursor: default;
 

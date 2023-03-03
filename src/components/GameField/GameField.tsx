@@ -1,9 +1,10 @@
 import './GameField.scss'
 import {MouseEvent} from 'react'
 import {ICellUnit} from "../../types";
-import {CellState} from "../App/App";
+import {CellState, GameOverState} from "../App/App";
 
 interface GameFieldProps {
+    gameOver: GameOverState | null,
     cellSize: number
     cellUnits: ICellUnit[]
     onMouseDown: () => void
@@ -15,6 +16,7 @@ export default function GameField({
                                       cellUnits,
                                       onMouseDown,
                                       onMouseUp,
+                                      gameOver,
                                   }: GameFieldProps) {
     function handleMouseDown(e: MouseEvent<HTMLButtonElement>) {
         onMouseDown()
@@ -41,7 +43,7 @@ export default function GameField({
                         handleMouseUp(index, e.button == 0 ? true : false)
                     }}
                     className={`game-field__grid-element game-field__grid-element_${
-                        (item.cellState == CellState.Default && "default") || (item.cellState == CellState.Defused && "defused") || ((item.cellState == CellState.Question && !item.isClear) && 'question') ||
+                        (item.isMined && (gameOver == GameOverState.Win || gameOver == GameOverState.Lose) && (item.cellState == CellState.Defused ? 'mine-defused' : (item.boom ? 'boom' : 'mined'))) || (item.cellState == CellState.Default && "default") || (item.cellState == CellState.Defused && "defused") || ((item.cellState == CellState.Question && !item.isClear) && 'question') ||
                         (item.adjacentMines
                             ? `adjacent-mines_${item.adjacentMines}`
                             : item.isClear && (item.cellState == CellState.Question ? 'clear-question' : 'clear')) ||
