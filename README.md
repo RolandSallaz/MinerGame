@@ -10,5 +10,5 @@ React 18, Typescript, Scss
 https://rolandsallaz.github.io/MinerGame/
 
 ## Инструкция по запуску
-npm i
+npm i <br />
 npm start
