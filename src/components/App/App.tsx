@@ -32,8 +32,21 @@ const App = memo(() => {
     const [smileEmotion, setSmileyEmotion] = useState<SmileyStatus>(
         SmileyStatus.Normal,
     )
+    const [openedCells, setOpenedCells] = useState<number>(0)
     const [isGameOver, setIsGameOver] = useState(false)
     const interval = useRef<ReturnType<typeof setInterval>>()
+
+    const adjacentCells = [
+        -GameSettings.CellSize,
+        -GameSettings.CellSize - 1,
+        -GameSettings.CellSize + 1,
+        -1,
+        1,
+        GameSettings.CellSize,
+        GameSettings.CellSize - 1,
+        GameSettings.CellSize + 1,
+    ]
+
     useEffect(() => {
         //timer controller
         if (isGameOver) {
@@ -48,7 +61,9 @@ const App = memo(() => {
             changeSmiley(SmileyStatus.Dead)
         }
     }, [isGameOver, smileEmotion])
-
+    useEffect(() => {
+        console.log(openedCells)
+    }, [openedCells])
     useEffect(() => {
         startNewGame()
     }, [])
@@ -62,23 +77,25 @@ const App = memo(() => {
             arr.map((i) => ({cellNumber: i, isMined: false, isClear: false})),
         )
         setTimer(0)
+        setOpenedCells(0)
         setMinesCount(GameSettings.InitMines)
         setIsGameStarted(false)
         changeSmiley(SmileyStatus.Normal)
     }
 
     function plantMines(arrayToFill: ICellUnit[], clickedCell: number) {
-        const arr = arrayToFill.filter((item) => item.cellNumber !== clickedCell)
-        const shuffled = [...arr].sort(() => 0.5 - Math.random())
+        const shuffled = arrayToFill.filter(item=>item.cellNumber!==clickedCell).sort(() => 0.5 - Math.random())
         shuffled
             .slice(0, GameSettings.InitMines)
-            .forEach((item) => (arr[item.cellNumber].isMined = true))
-        setCellUnits(arr)
-        return arr;
+            .forEach((item) => {
+                arrayToFill[item.cellNumber].isMined = true
+            })
+        setCellUnits(arrayToFill)
+        return arrayToFill;
     }
 
     function handleCellUnitClick(cellNumber: number) {
-        function setMinesAroundCell(arr:ICellUnit[]) {
+        function setMinesAroundCell(arr: ICellUnit[]) {
             arr[cellNumber].adjacentMines = minesAround
         }
 
@@ -86,10 +103,10 @@ const App = memo(() => {
         let minesAround = checkAroundCell(cellNumber)
         if (!isGameStarted) {
             // первый клик
-
+            setOpenedCells(prev=>prev+1)
             const minedArr = plantMines(cellUnits, cellNumber)
             setIsGameStarted(true)
-            minesAround = checkAroundCell(cellNumber,minedArr)
+            minesAround = checkAroundCell(cellNumber, minedArr)
             if (minesAround) {
                 return setMinesAroundCell(minedArr)
             } // Если есть мины, то оставляем одну клетку
@@ -108,9 +125,8 @@ const App = memo(() => {
                 } else {
                     // Если попали на пустую клетку
                     setCellUnits((prev) => {
-                        const newArr = [...prev]
-                        newArr[cellNumber].isClear = true
-                        return newArr
+                        prev[cellNumber].isClear = true
+                        return prev
                     })
                     openNearCells(cellNumber)
                 }
@@ -119,21 +135,11 @@ const App = memo(() => {
     }
 
     function openNearCells(cellNumber: number) {
-        const adjacentCells = [
-            -GameSettings.CellSize,
-            -GameSettings.CellSize - 1,
-            -GameSettings.CellSize + 1,
-            -1,
-            1,
-            GameSettings.CellSize,
-            GameSettings.CellSize - 1,
-            GameSettings.CellSize + 1,
-        ]
         adjacentCells.forEach((cell) => {
             const cellToCheck = cellNumber + cell
             if (
                 cellToCheck >= 0 &&
-                cellToCheck < Math.pow(GameSettings.CellSize, 2) &&
+                cellToCheck < cellUnits.length &&
                 !cellUnits[cellToCheck].isClear &&
                 !cellUnits[cellToCheck].isMined
             ) {
@@ -150,21 +156,11 @@ const App = memo(() => {
 
     function checkAroundCell(cellNumber: number, arr: ICellUnit[] = cellUnits) {
         let mines = 0
-        const adjacentCells = [
-            -GameSettings.CellSize,
-            -GameSettings.CellSize - 1,
-            -GameSettings.CellSize + 1,
-            -1,
-            1,
-            GameSettings.CellSize,
-            GameSettings.CellSize - 1,
-            GameSettings.CellSize + 1,
-        ]
         adjacentCells.forEach((cell) => {
             const cellToCheck = cellNumber + cell
             if (
                 cellToCheck >= 0 &&
-                cellToCheck < Math.pow(GameSettings.CellSize, 2) - 1
+                cellToCheck < cellUnits.length
             ) {
                 arr[cellToCheck].isMined && mines++
             }
