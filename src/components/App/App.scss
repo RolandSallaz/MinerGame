@@ -1,0 +1,24 @@
+@use "../../variables.scss" as *; 
+
+.game {
+  width: $gameWidth;
+  padding:0 15px;
+  height: 636px;
+  background-color: $gameColor;
+  box-shadow: $boxShadow;
+}
+
+.footer{
+  &__copyright{
+    color:white;
+    display: flex;
+    
+  }
+  &__link{
+    text-decoration: none;
+    color: gray;
+    &:hover{
+      color:rgb(196, 196, 196)
+    }
+  }
+}
