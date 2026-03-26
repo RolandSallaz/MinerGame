@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/MinerGame/static/css/main.ecf94a6e.css",
-    "main.js": "/MinerGame/static/js/main.11cd2841.js",
+    "main.js": "/MinerGame/static/js/main.6419bba8.js",
     "static/js/787.28cb0dcd.chunk.js": "/MinerGame/static/js/787.28cb0dcd.chunk.js",
     "index.html": "/MinerGame/index.html",
     "main.ecf94a6e.css.map": "/MinerGame/static/css/main.ecf94a6e.css.map",
-    "main.11cd2841.js.map": "/MinerGame/static/js/main.11cd2841.js.map",
+    "main.6419bba8.js.map": "/MinerGame/static/js/main.6419bba8.js.map",
     "787.28cb0dcd.chunk.js.map": "/MinerGame/static/js/787.28cb0dcd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.ecf94a6e.css",
-    "static/js/main.11cd2841.js"
+    "static/js/main.6419bba8.js"
   ]
 }
